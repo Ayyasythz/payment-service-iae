@@ -6,6 +6,9 @@ type Mutation struct {
 }
 
 type PaymentResponse struct {
+	OrderID     string `json:"orderId"`
+	BookID      string `json:"bookId"`
+	CustomerID  string `json:"customerId"`
 	Token       string `json:"token"`
 	RedirectURL string `json:"redirect_url"`
 }

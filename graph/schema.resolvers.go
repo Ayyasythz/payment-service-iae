@@ -15,17 +15,22 @@ import (
 )
 
 // CreatePayment is the resolver for the createPayment field.
-func (r *mutationResolver) CreatePayment(ctx context.Context, amount int32) (*model.PaymentResponse, error) {
+func (r *mutationResolver) CreatePayment(ctx context.Context, amount int32, bookID string, customerID string) (*model.PaymentResponse, error) {
 	user := getCurrentUser(ctx) // Implement your auth logic
 	if user == nil {
 		return nil, fmt.Errorf("unauthorized")
 	}
+
 	// Generate unique order ID
-	orderID := fmt.Sprintf("ORDER-%d-%s", time.Now().Unix(), uuid.New().String()[0:8])
+	orderID := fmt.Sprintf("BOOK-%s-CUST-%s-%d-%s",
+		bookID,
+		customerID,
+		time.Now().Unix(),
+		uuid.New().String()[0:8])
 
 	// Prepare customer data
 	customer := &midtrans.CustomerDetails{
-		FName: "TEst",
+		FName: "Test",
 		LName: "User",
 		Email: "test@example.com",
 		Phone: "08123456789",
@@ -42,6 +47,9 @@ func (r *mutationResolver) CreatePayment(ctx context.Context, amount int32) (*mo
 	}
 
 	return &model.PaymentResponse{
+		OrderID:     orderID,
+		BookID:      bookID,
+		CustomerID:  customerID,
 		Token:       resp.Token,
 		RedirectURL: resp.RedirectURL,
 	}, nil
